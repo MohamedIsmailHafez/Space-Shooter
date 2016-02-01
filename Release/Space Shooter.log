@@ -1,0 +1,6 @@
+﻿  main.cpp
+main.cpp(441): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : see declaration of 'sprintf'
+  Generating code
+  Finished generating code
+  Space Shooter.vcxproj -> C:\Users\Som3a\Dropbox\GUC\DMET502 Computer Graphics\Assignments\Assignment I\Space Shooter\Release\Space Shooter.exe

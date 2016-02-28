@@ -3,10 +3,10 @@
 #include "Vector2.h"
 #include "PlayerShip.h"
 #include "EnemyShip.h"
-#include "Bullet.h"
 #include <time.h>
+#include "Renderer.h"
 
-GameObject* GameManager::mPlayerShip = nullptr;
+PlayerShip* GameManager::mPlayerShip = nullptr;
 Vector2 GameManager::mNormalizedDir = Vector2();
 std::vector<GameObject *> GameManager::GameObjects;
 int GameManager::mScore = 0;
@@ -26,7 +26,7 @@ GameManager::~GameManager()
 	GameObjects.clear();
 }
 
-void GameManager::Initialize(GameObject* fPlayerShip)
+void GameManager::Initialize(PlayerShip* fPlayerShip)
 {
 	if(fPlayerShip == nullptr)
 		return;
@@ -46,7 +46,7 @@ void GameManager::InitializeCallBacks()
 	glutTimerFunc(1000.0/1.0, SpawnEnemies, 0);
 
 	//Update Game Objects as fast as the frame-rate.
-	glutTimerFunc(1000.0/60.0, UpdateGameObjects, 0);
+	//glutTimerFunc(1000.0/60.0, UpdateGameObjects, 0);
 }
 
 void GameManager::Add(GameObject* fObject)
@@ -72,15 +72,14 @@ void GameManager::MouseMotion(int x, int y)
 	
 	float angle = acos(cosAngle) * 180.f / PI;
 	
-	dynamic_cast<PlayerShip*>(mPlayerShip)->SetDirectionAngle( x > GameConfig::getInstance().ScreenWidth/2.f ? -angle : angle);
+	mPlayerShip->SetDirectionAngle( x > GameConfig::getInstance().ScreenWidth/2.f ? -angle : angle);
 }
 
 void GameManager::Mouse(int button, int state, int x, int y)
 {
 	if(button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
 	{
-		Bullet* bullet = new Bullet(Vector2(GameConfig::getInstance().ScreenWidth/2, GameConfig::getInstance().ScreenHeight/2), mNormalizedDir);
-		GameObjects.push_back(bullet);
+		mPlayerShip->Fire(mNormalizedDir);
 	}
 }
 
@@ -123,16 +122,21 @@ void GameManager::SpawnEnemies(int)
 	glutTimerFunc(1000.0/Difficulty, GameManager::SpawnEnemies, 0);
 }
 
-void GameManager::UpdateGameObjects(int)
+int GameManager::mCurrentTime		= 0;
+int GameManager::mPreviousTime		= 0;
+
+void GameManager::UpdateGameObjects(int fElapsed)
 {
 	if(mGameState != GameState::GAMEPLAY)
 		return;
 
+	mCurrentTime = glutGet(GLUT_ELAPSED_TIME);
+	
 	for(unsigned int i = 0; i < GameObjects.size(); i++)
 	{
 		GameObject* obj = GameObjects[i];
 
-		obj->Update(1000.0f/60.f);
+		obj->Update(fElapsed);
 
 		if(obj->GetType() == GameObjectType::BULLET)
 		{
@@ -171,10 +175,18 @@ void GameManager::UpdateGameObjects(int)
 				}
 			}
 		}
+
+		if(obj->GetType() == GameObjectType::PLAYER_SHIP)
+		{
+			if(dynamic_cast<PlayerShip*>(obj)->GetTimer() <= 0)
+				mGameState = GameState::GAMEOVER;
+		}
 	}
 
+	mPreviousTime = mCurrentTime;
+
 	//Update Game Objects as fast as the frame-rate.
-	glutTimerFunc(1000.0/120.0, UpdateGameObjects, 0);
+	//glutTimerFunc(1000.f/60.f, UpdateGameObjects, 0);
 }
 
 void GameManager::UpdateScore()

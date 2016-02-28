@@ -1,6 +1,7 @@
 #include "PlayerShip.h"
 #include "GameConfig.h"
 #include "GameManager.h"
+#include "Bullet.h"
 
 PlayerShip::PlayerShip()
 	: Ship(Vector2(GameConfig::getInstance().ScreenWidth/2, GameConfig::getInstance().ScreenHeight/2), Vector2(), 0.f, GameObjectType::PLAYER_SHIP)
@@ -21,9 +22,12 @@ void PlayerShip::GLRender()
 
 	glRotatef(mDirectionangle, 0, 0, 1);
 
-	if(GameManager::getInstance().GetGameState() == GameState::GAMEPLAY)
+	if(mIsDying)
 	{
-
+		GameTextureManager::getInstance().DrawTextured(0, 0, 256, 256, GameTextureManager::getInstance().explosionTex);
+	}
+	else
+	{
 #if DEBUG
 		glColor3f(0,1,0);
 		RenderDebugShip(mPosition.x, mPosition.y);
@@ -31,16 +35,12 @@ void PlayerShip::GLRender()
 		GameTextureManager::getInstance().DrawTextured(0, 0, 64, 64, GameTextureManager::getInstance().Player_Ship_Texture);
 #endif
 	}
-	else
-	{
-		GameTextureManager::getInstance().DrawTextured(0, 0, 512, 512, GameTextureManager::getInstance().explosionTex);
-	}
 }
 
 void PlayerShip::Update(float fDeltaTime)
 {
 	if(mIsDying)
-		mTimer -= 0.06f;
+		mTimer -= 1.0f;
 }
 
 void PlayerShip::SetDirectionAngle(float fDirectionAngle)
@@ -49,4 +49,10 @@ void PlayerShip::SetDirectionAngle(float fDirectionAngle)
 		return;
 
 	mDirectionangle = fDirectionAngle;
+}
+
+void PlayerShip::Fire(Vector2 fDirection)
+{
+	Bullet* bullet = new Bullet(Vector2(GameConfig::getInstance().ScreenWidth/2, GameConfig::getInstance().ScreenHeight/2), fDirection);
+	GameManager::getInstance().Add(bullet);
 }

@@ -34,13 +34,14 @@ void EnemyShip::GLRender()
 {
 	glLoadIdentity();
 
+	glTranslatef(mPosition.x, mPosition.y, 0);
+
 	if(mIsDying)
 	{
-		GameTextureManager::getInstance().DrawTextured(mPosition.x, mPosition.y, 60.0f, 60.0f, GameTextureManager::getInstance().explosionTex);
+		GameTextureManager::getInstance().DrawTextured(0, 0, 60.0f, 60.0f, GameTextureManager::getInstance().explosionTex);
 	}
 	else
 	{
-		glTranslatef(mPosition.x, mPosition.y, 0);
 		glRotatef(mDirectionangle, 0 ,0, 1);
 		if(mLevel == 1)
 			glScalef(.5,.5,0);
@@ -62,7 +63,7 @@ void EnemyShip::GLRender()
 //=======================================================================
 void EnemyShip::Update(float fDeltaTime)
 {
-	mPosition += mDirection *0.1* fDeltaTime;
+	mPosition += mDirection * 200.f * float(fDeltaTime/1000.f);
 
 	if(mIsDying)
 		mTimer -= 0.06f;

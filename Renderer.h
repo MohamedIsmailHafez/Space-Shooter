@@ -11,9 +11,9 @@ public:
 	}
 
 	void InitializeRenderer(int argc, char** argv);
+	static int mElapsedTime; 
 
 private:
-	static int mElapsedTime; 
 	static int mLastFrameTime;
 	static int mCurrentTime;
 	static int mPreviousTime;

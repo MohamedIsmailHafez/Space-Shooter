@@ -108,7 +108,8 @@ void Renderer::CalculateFPS()
 	// Code to compute frames per second
 	mFrameNumber++;
 	glColor3f(0.2, 0.2, 0.2);
-	if (mCurrentTime - mPreviousFPSTime > 1000) {
+	if (mCurrentTime - mPreviousFPSTime > 1000) 
+	{
 		sprintf(mFps,"FPS %1.0f", mFrameNumber*1000.0/(mCurrentTime-mPreviousFPSTime));
 		mPreviousFPSTime = mCurrentTime;
 		mFrameNumber = 0;
@@ -152,7 +153,7 @@ void Renderer::DisplayScore()
 	strs << "Score: " << GameManager::getInstance().GetScore();
 	std::string temp_str = strs.str();
 	char* char_type = (char*)temp_str.c_str();
-	RenderText(char_type, glutGet(GLUT_WINDOW_WIDTH) - 220, glutGet(GLUT_WINDOW_HEIGHT) - 50, 2);
+	RenderText(char_type, glutGet(GLUT_WINDOW_WIDTH) - 300, glutGet(GLUT_WINDOW_HEIGHT) - 50, 2);
 }
 
 //=======================================================================
@@ -170,11 +171,11 @@ void Renderer::DisplayHints()
 //=======================================================================
 void Renderer::DisplayGameOverScreen()
 {
-	glColor3f(sin((float)glutGet(GLUT_ELAPSED_TIME)/350) + 0.5f, 0.f, 0.f);
+	glColor3f(sin((float)glutGet(GLUT_ELAPSED_TIME)/350) + 1.5f, 0.f, 0.f);
 
 	glLineWidth(5);
 
-	RenderText("Game Over", glutGet(GLUT_WINDOW_WIDTH)/5, glutGet(GLUT_WINDOW_HEIGHT)/2, 10);
+	RenderText("Game Over", glutGet(GLUT_WINDOW_WIDTH)/6, glutGet(GLUT_WINDOW_HEIGHT)/2, 10);
 
 	glLineWidth(1);
 
@@ -198,7 +199,7 @@ void Renderer::Display(void)
 {
 	mCurrentTime = glutGet(GLUT_ELAPSED_TIME);
 
-	if(mCurrentTime - mPreviousTime >= 16)
+	if(mCurrentTime - mPreviousTime > 14)
 	{
 		mPreviousTime = mCurrentTime;
 
@@ -209,6 +210,8 @@ void Renderer::Display(void)
 		switch (GameManager::getInstance().GetGameState())
 		{
 		case GameState::GAMEPLAY:
+
+			GameManager::getInstance().UpdateGameObjects(mElapsedTime);
 
 			RenderGameObjects();
 
@@ -237,5 +240,6 @@ void Renderer::Display(void)
 		mLastFrameTime = mCurrentTime;
 	}
 
-	glutPostRedisplay();	
+	glutPostRedisplay();
+
 }

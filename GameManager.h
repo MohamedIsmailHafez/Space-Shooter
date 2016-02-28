@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "GameObject.h"
+#include "PlayerShip.h"
 
 enum class GameState {GAMEPLAY, GAMEOVER};
 
@@ -18,11 +19,15 @@ public:
 	static std::vector<GameObject *> GameObjects;
 
 	void Add(GameObject* fObject);
-	void Initialize(GameObject* fPlayerShip);
+	void Initialize(PlayerShip* fPlayerShip);
 	int GetScore() { return mScore; }
 	GameState GetGameState() { return mGameState; }
 
+	static void UpdateGameObjects(int);
 private:
+	static int mCurrentTime;
+
+	static int mPreviousTime;
 	GameManager();
 	virtual ~GameManager();
 	GameManager(GameManager const&);
@@ -34,14 +39,13 @@ private:
 	static void Mouse(int button, int state, int x, int y);
 	static void Keyboard(unsigned char key, int x, int y);
 	static void SpawnEnemies(int);
-	static void UpdateGameObjects(int);
 	static void UpdateScore();
 
 	static bool OutofBounds(Vector2 fPosition);
 
 	static Vector2 GetRandomPosOffScreen();
 	static float Distance(Vector2 fPosition1, Vector2 fPosition2);
-	static GameObject* mPlayerShip;
+	static PlayerShip* mPlayerShip;
 	static Vector2 mNormalizedDir;
 	static int mScore;
 	static GameState mGameState;
